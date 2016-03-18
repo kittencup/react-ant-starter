@@ -1,16 +1,15 @@
 import { Table,Button,Icon,Popconfirm} from 'antd';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {getPosts,setQuery,deletePost} from '../../actions/post';
 
 const ButtonGroup = Button.Group;
 
+class PostList extends React.Component {
 
-class PostsList extends React.Component {
-
-    state = {
-        loading: false,
-        pagination: {
-            pageSize: 20
-        }
-    }
+    static propTypes = {
+        actions: React.PropTypes.object
+    };
 
     columns = [
         {
@@ -35,7 +34,7 @@ class PostsList extends React.Component {
                     <Button type="primary">
                         <Icon type="edit"/>
                     </Button>
-                    <Popconfirm placement="top" title={text} record={record} target={this} onConfirm={this.deleteData}>
+                    <Popconfirm placement="top" title={text} record={record} {...this.props} onConfirm={this.deleteRow}>
                         <Button type="primary">
                             <Icon type="delete"/>
                         </Button>
@@ -45,69 +44,46 @@ class PostsList extends React.Component {
         }
     ];
 
-    deleteData() {
-        console.log(this.props.target.getData());
+    deleteRow() {
+        this.props.dispatch(deletePost(this.props.record.id));
     }
-
-    getData(params = {}) {
-        this.setState({
-            loading: true
-        });
-        $.ajax({
-                url: 'http://api.wallstcn.com/v2/policies/index',
-                dataType: 'jsonp',
-                data: params
-            })
-            .success((data)=> {
-                this.setState({
-                    loading: false,
-                    data: data.results,
-                    pagination: {
-                        total: data.paginator.total
-                    }
-                });
-            });
-
-    };
 
 
     handleTableChange(pagination, filters, sorter) {
-        const pager = this.state.pagination;
 
-        pager.current = pagination.current;
-
-        this.setState({
-            pagination: pager
-        });
-        const params = {
+        const query = {
             limit: pagination.pageSize,
             page: pagination.current
         };
 
         if (sorter.field) {
-            params.order = (sorter.order === 'ascend' ? '' : '-') + sorter.field;
+            query.order = (sorter.order === 'ascend' ? '' : '-') + sorter.field;
         }
 
         for (let key in filters) {
             if (filters.hasOwnProperty(key)) {
-                params[key] = filters[key];
+                query[key] = filters[key];
             }
         }
-        this.getData(params);
+
+        this.props.dispatch(setQuery(query));
+        this.props.dispatch(getPosts());
+
     }
 
     componentDidMount() {
-
-        this.getData({page: this.state.pagination.pageSize});
+        this.props.dispatch(getPosts());
     }
 
     render() {
 
+        let {posts,loading} = this.props;
+
         return (
             <Table columns={this.columns}
-                   dataSource={this.state.data}
-                   loading={this.state.loading}
-                   pagination={this.state.pagination}
+                   dataSource={posts.results}
+                   loading={loading}
+                   pagination={posts.pagination}
                    onChange={this.handleTableChange.bind(this)}
                    rowKey={record => record.id}
                    bordered
@@ -117,4 +93,4 @@ class PostsList extends React.Component {
     }
 }
 
-export default PostsList;
+export default connect((state) => state.post)(PostList);
