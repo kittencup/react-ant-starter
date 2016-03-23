@@ -24,7 +24,7 @@ var libDevPath = [
     '[node_modules_path]/jquery/dist/jquery.js',
     '[node_modules_path]/react/dist/react.js',
     '[node_modules_path]/react-dom/dist/react-dom.js',
-     '[node_modules_path]/rx/dist/rx.all.js'
+    '[node_modules_path]/rx/dist/rx.all.js'
 ]
 
 libPath = replaceHolder(holderKeys, libPath)
@@ -69,7 +69,6 @@ gulp.task("default", function () {
         }))
     })
 })
-
 
 
 /**

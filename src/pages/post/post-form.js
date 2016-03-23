@@ -1,17 +1,36 @@
 import { Form, Input ,Button,Spin } from 'antd';
 import {createPost,resetPostForm} from '../../actions/post';
 import {connect} from 'react-redux';
+import Editor from '../../components/editor/editor';
 
 const FormItem = Form.Item;
 
 class PostForm extends React.Component {
 
+    constructor(props){
+
+        super(props);
+
+        this.state = {content:'11'};
+
+    }
+
     componentDidMount() {
         this.props.dispatch(resetPostForm());
+
+        setTimeout(()=>{
+            this.setState({content:'<p>hello world</p>'})
+        },5000)
     }
 
     handleSubmit(e) {
         e.preventDefault();
+
+        let content = this.refs.editor.getValue();
+        this.setState({content:content});
+
+        console.log(content);
+
         this.props.form.validateFields((errors, values) => {
             if (!!errors) {
                 return;
@@ -53,6 +72,8 @@ class PostForm extends React.Component {
                     <FormItem label="标题：" {...layout}>
                         <Input {...titleProps} />
                     </FormItem>
+                    <Editor ref="editor" content={this.state.content} />
+
                     <FormItem wrapperCol={{ span: 12, offset: 7 }}>
                         <Button type="primary" onClick={this.handleSubmit.bind(this)}>创建</Button>
                         &nbsp;&nbsp;&nbsp;

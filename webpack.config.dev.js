@@ -31,11 +31,12 @@ module.exports = {
                 test: /\.css$/,
                 loader: 'style-loader!css-loader'
             },
-            {test: /\.(png|jpg|gif)$/, loader: 'url-loader'}
+            {test: /\.(png|jpg|gif)$/, loader: 'url-loader'},
+            { test: /\.js/, loader: 'imports?define=>false'}
         ]
     },
     externals: {
-        "jquery": "jquery",
+        "jquery": "jQuery",
         "react-dom": "ReactDOM",
         "react": "React",
         "rx-lite": "Rx",

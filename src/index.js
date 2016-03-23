@@ -1,12 +1,10 @@
 import Navigation from './components/navigation/navigation';
 import Main from './components/main/main';
 import Dashboard  from './pages/dashboard/dashboard';
-import Page from './components/page/page';
 import Async from './async';
 import {Provider} from 'react-redux';
-import { Router, Route ,hashHistory,IndexRoute,Redirect} from 'react-router';
+import { Router, Route ,hashHistory,IndexRoute} from 'react-router';
 import configureStore from './utils/configure-store';
-import post from './reducers/post';
 
 let store = configureStore({});
 
